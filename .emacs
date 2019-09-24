@@ -41,7 +41,7 @@ There are two things you can do about this warning:
  '(custom-enabled-themes (quote (tsdh-dark)))
  '(package-selected-packages
    (quote
-    (treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil treemacs use-package zenburn-theme))))
+    (rainbow-delimiters clojure-mode-extra-font-locking paredit cider flycheck elpy treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil treemacs use-package zenburn-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -139,6 +139,13 @@ There are two things you can do about this warning:
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag)))
 
+(with-eval-after-load 'treemacs
+
+  (defun treemacs-ignore-files (filename absolute-path)
+    (string-suffix-p ".pyc" absolute-path))
+
+  (add-to-list 'treemacs-ignored-file-predicates #'treemacs-ignore-files))
+
 (use-package treemacs-evil
   :after treemacs evil
   :ensure t)
@@ -155,3 +162,26 @@ There are two things you can do about this warning:
 (use-package treemacs-magit
   :after treemacs magit
   :ensure t)
+
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+(add-hook 'clojure-mode-hook          #'paredit-mode)
+
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+(provide '.emacs)
+;;; .emacs ends here
